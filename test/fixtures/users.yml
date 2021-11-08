@@ -2,7 +2,7 @@
 
 one:
   email: 'first_user@email.com'
-  password_digest: 'firstpassword'
+  password_digest: <%= BCrypt::Password.create('my_password1') %>
 
 two:
   email: 'second_user@email.com'
