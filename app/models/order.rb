@@ -1,4 +1,6 @@
 class Order < ApplicationRecord
+  include EnoughProductsValidator
+
   before_validation :set_total!
 
   belongs_to :user
@@ -7,9 +9,13 @@ class Order < ApplicationRecord
   
   validates :total, numericality: { greater_than_or_equal_to: 0 }
   validates :total, presence: true
+  validates_with EnoughProductsValidator
 
   def set_total!
-    self.total = products.map(&:price).sum
+    def set_total!
+      self.total = self.placements
+      .map{ |placement| placement.product.price * placement.quantity }.sum
+      end
   end
 
   def build_placements_with_product_ids_and_quantities(product_ids_and_quantities)
