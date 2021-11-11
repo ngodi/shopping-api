@@ -36,7 +36,7 @@ class Api::V1::OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Placement.count', 2) do
         post api_v1_orders_url, params: @order_params, as: :json,
         headers: { Authorization: JsonWebToken.encode(user_id: @order.user_id) }
-    end
+      end
     end
     assert_response :created
   end
@@ -55,7 +55,7 @@ class Api::V1::OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     json_response = JSON.parse(response.body)
     include_product_attr = json_response['included'][0]['attributes']
-    assert_equal @order.products.first.title, include_product_attr['title']
+    assert_equal @order.products.first.title, json_response.dig(:included, 0, :attributes, :title)
   end
 
 end
