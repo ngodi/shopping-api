@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  include EnoughProductsValidator
+ # include EnoughProductsValidator
 
   before_validation :set_total!
 
@@ -9,7 +9,7 @@ class Order < ApplicationRecord
   
   validates :total, numericality: { greater_than_or_equal_to: 0 }
   validates :total, presence: true
-  validates_with EnoughProductsValidator
+ #validates_with EnoughProductsValidator
 
   def set_total!
     def set_total!
