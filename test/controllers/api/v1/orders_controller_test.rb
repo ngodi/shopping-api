@@ -24,16 +24,14 @@ class Api::V1::OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_difference('Order.count', 1) do
       post api_v1_orders_url,
       params: @order_params,
-      headers: { Authorization: JsonWebToken.encode(user_id:
-      @order.user_id) },
-      as: :json
+      headers: { Authorization: JsonWebToken.encode(user_id: @order.user_id) },  as: :json
     end
     assert_response :created
   end
 
   test 'should create order with two products and placements' do
     assert_difference('Order.count', 1) do
-    assert_difference('Placement.count', 2) do
+       assert_difference('Placement.count', 2) do
         post api_v1_orders_url, params: @order_params, as: :json,
         headers: { Authorization: JsonWebToken.encode(user_id: @order.user_id) }
       end
@@ -42,13 +40,17 @@ class Api::V1::OrdersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should show orders' do
-    get api_v1_orders_url,
-    headers: { Authorization: JsonWebToken.encode(user_id: @order.user_id) }, as: :json
+    get api_v1_orders_url, headers: { Authorization: JsonWebToken.encode(user_id: @order.user_id) }, as: :json
     assert_response :success
+    json_response = JSON.parse(response.body, symbolize_names: true)
+    assert_equal @order.user.orders.count, json_response[:data].count
 
-    json_response = JSON.parse(response.body)
-    assert_equal @order.user.orders.count, json_response['data'].count
+    assert_not_nil json_response.dig(:links, :first)
+    assert_not_nil json_response.dig(:links, :last)
+    assert_not_nil json_response.dig(:links, :prev)
+    assert_not_nil json_response.dig(:links, :next)
   end
+
 
   test 'should show order' do
     get api_v1_order_url(@order), headers: { Authorization: JsonWebToken.encode(user_id: @order.user_id) }, as: :json
