@@ -17,7 +17,7 @@ class Api::V1::OrdersController < ApplicationController
         order = current_user.orders.find(params[:id])
         if order
             options = { include: [:products] }
-            render json: OrderSerializer.new(order, options).serializable_hash
+            render json: OrderSerializer.new(order, options).serializable_hash.to_json
         else
             head 404
         end
